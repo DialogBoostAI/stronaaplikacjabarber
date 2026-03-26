@@ -37,19 +37,19 @@ const HAIR_TYPE_ICONS = {
   kręcone:  <HairCurly />,
 }
 
-const HAIR_THICKNESS_ICONS = {
-  cienkie:  <ThickThin />,
-  normalne: <ThickNormal />,
-  grube:    <ThickThick />,
+const STYLING_TIME_ICONS = {
+  none:          <StylingNone />,
+  minimal:       <StylingMinimal />,
+  likes_styling: <StylingFull />,
 }
 
 function getIcon(stepKey, value) {
-  if (stepKey === 'faceShape')     return null // handled separately with images
-  if (stepKey === 'hairType')      return HAIR_TYPE_ICONS[value]
-  if (stepKey === 'hairThickness') return HAIR_THICKNESS_ICONS[value]
-  if (stepKey === 'sideLength')    return SIDE_LENGTH_ICONS[value]
-  if (stepKey === 'fringeLength')  return FRINGE_ICONS[value]
-  if (stepKey === 'backLength')    return BACK_LENGTH_ICONS[value]
+  if (stepKey === 'faceShape')    return null // handled separately with images
+  if (stepKey === 'hairType')     return HAIR_TYPE_ICONS[value]
+  if (stepKey === 'sideLength')   return SIDE_LENGTH_ICONS[value]
+  if (stepKey === 'fringeLength') return FRINGE_ICONS[value]
+  if (stepKey === 'backLength')   return BACK_LENGTH_ICONS[value]
+  if (stepKey === 'stylingTime')  return STYLING_TIME_ICONS[value]
   return null
 }
 
@@ -391,30 +391,37 @@ function HairCurly() {
   )
 }
 
-function ThickThin() {
+/* ── Styling Time Icons ────────────────────────────────── */
+
+function StylingNone() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" className="w-full h-full">
-      {[14, 22, 30, 38].map(x => (
-        <line key={x} x1={x} y1="8" x2={x} y2="48" strokeWidth="1" strokeLinecap="round"/>
-      ))}
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-full h-full">
+      <circle cx="28" cy="20" r="10" />
+      <path d="M14 48 C14 38 22 32 28 32 C34 32 42 38 42 48" strokeLinecap="round"/>
+      <path d="M20 16 Q28 8 36 16" strokeWidth="2" opacity="0.4"/>
     </svg>
   )
 }
-function ThickNormal() {
+function StylingMinimal() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" className="w-full h-full">
-      {[14, 22, 30, 38].map(x => (
-        <line key={x} x1={x} y1="8" x2={x} y2="48" strokeWidth="2.5" strokeLinecap="round"/>
-      ))}
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-full h-full">
+      <circle cx="28" cy="16" r="5" fill="currentColor" opacity="0.15"/>
+      <path d="M22 14 L28 8 L34 14" strokeLinecap="round" opacity="0.6"/>
+      <rect x="18" y="28" width="20" height="6" rx="3" opacity="0.3" fill="currentColor"/>
+      <path d="M24 38 L24 48" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+      <path d="M32 38 L32 48" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
     </svg>
   )
 }
-function ThickThick() {
+function StylingFull() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" className="w-full h-full">
-      {[14, 22, 30, 38].map(x => (
-        <line key={x} x1={x} y1="8" x2={x} y2="48" strokeWidth="5" strokeLinecap="round"/>
-      ))}
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-full h-full">
+      <circle cx="18" cy="14" r="5" fill="currentColor" opacity="0.15"/>
+      <circle cx="38" cy="14" r="4" fill="currentColor" opacity="0.15"/>
+      <rect x="12" y="24" width="14" height="5" rx="2.5" opacity="0.3" fill="currentColor"/>
+      <rect x="32" y="24" width="12" height="5" rx="2.5" opacity="0.3" fill="currentColor"/>
+      <path d="M16 34 C16 42 20 48 28 48 C36 48 40 42 40 34" strokeLinecap="round" opacity="0.5"/>
+      <path d="M24 36 L28 44 L32 36" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
     </svg>
   )
 }

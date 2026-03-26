@@ -1,12 +1,11 @@
 import { useState } from 'react'
 
 const CRITERIA_LABELS = {
-  faceShape:     'Kształt twarzy',
-  hairType:      'Typ włosów',
-  hairThickness: 'Grubość włosów',
-  sideLength:    'Boki',
-  fringeLength:  'Przód',
-  backLength:    'Tył',
+  faceShape:    'Kształt twarzy',
+  sideLength:   'Boki',
+  fringeLength: 'Przód',
+  backLength:   'Tył',
+  stylingTime:  'Stylizacja',
 }
 
 const SIDE_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3 }
@@ -30,12 +29,11 @@ export default function HaircutCard({ haircut, index, formData, steps }) {
 
   // match: 2 = perfect, 1 = partial, 0 = no match
   const criteria = [
-    { key: 'faceShape',     match: haircut.suitable_face_shapes.includes(formData.faceShape) ? 2 : 0 },
-    { key: 'hairType',      match: haircut.suitable_hair_types.includes(formData.hairType) ? 2 : 0 },
-    { key: 'hairThickness', match: haircut.suitable_hair_thicknesses.includes(formData.hairThickness) ? 2 : 0 },
-    { key: 'sideLength',    match: lengthMatchLevel(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK) },
-    { key: 'fringeLength',  match: lengthMatchLevel(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK) },
-    { key: 'backLength',    match: lengthMatchLevel(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK) },
+    { key: 'faceShape',    match: haircut.suitable_face_shapes.includes(formData.faceShape) ? 2 : 0 },
+    { key: 'sideLength',   match: lengthMatchLevel(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK) },
+    { key: 'fringeLength', match: lengthMatchLevel(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK) },
+    { key: 'backLength',   match: lengthMatchLevel(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK) },
+    { key: 'stylingTime',  match: haircut.styling_time.includes(formData.stylingTime) ? 2 : 0 },
   ]
 
   return (

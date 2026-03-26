@@ -18,37 +18,6 @@ export const STEPS = [
     ],
   },
   {
-    key: 'sideLength',
-    title: 'Jaka jest aktualna długość boków?',
-    options: [
-      { value: 'do_skóry',       label: 'Do skóry',       desc: 'Ogolone na zero lub prawie zero' },
-      { value: 'bardzo_krótkie', label: 'Bardzo krótkie', desc: 'Maszynka, kilka mm' },
-      { value: 'krótkie',        label: 'Krótkie',        desc: '1–3 cm, widoczna tekstura' },
-      { value: 'średnie',        label: 'Średnie',        desc: 'Powyżej 3 cm, zakrywają uszy' },
-    ],
-  },
-  {
-    key: 'fringeLength',
-    title: 'Jaka jest aktualna długość włosów z przodu?',
-    options: [
-      { value: 'bardzo_krótkie', label: 'Bardzo krótkie', desc: 'Maszynka, ledwo widoczne' },
-      { value: 'krótkie',        label: 'Krótkie',        desc: 'Kilka cm, nie sięgają czoła' },
-      { value: 'średnie',        label: 'Średnie',        desc: 'Do brwi lub oczu' },
-      { value: 'długie',         label: 'Długie',          desc: 'Poniżej oczu' },
-    ],
-  },
-  {
-    key: 'backLength',
-    title: 'Jaka jest aktualna długość tyłu?',
-    options: [
-      { value: 'do_skóry',       label: 'Do skóry',       desc: 'Ogolone na zero' },
-      { value: 'bardzo_krótkie', label: 'Bardzo krótkie', desc: 'Maszynka, kilka mm' },
-      { value: 'krótkie',        label: 'Krótkie',        desc: 'Równo z bokami, 1–3 cm' },
-      { value: 'średnie',        label: 'Średnie',        desc: '3–6 cm, lekko odstaje' },
-      { value: 'długie',         label: 'Długie',          desc: 'Poniżej karku' },
-    ],
-  },
-  {
     key: 'hairType',
     title: 'Jaki jest naturalny typ Twoich włosów?',
     options: [
@@ -58,52 +27,85 @@ export const STEPS = [
     ],
   },
   {
-    key: 'hairThickness',
-    title: 'Jaka jest grubość Twoich włosów?',
+    key: 'sideLength',
+    title: 'Jak krótkie chcesz mieć boki?',
     options: [
-      { value: 'cienkie',  label: 'Cienkie',  desc: 'Delikatne, niezbyt gęste' },
-      { value: 'normalne', label: 'Normalne', desc: 'Średnia gęstość i grubość' },
-      { value: 'grube',    label: 'Grube',    desc: 'Gęste, ciężkie włosy' },
+      { value: 'do_skóry',       label: 'Do skóry',       desc: 'Ogolone na zero' },
+      { value: 'bardzo_krótkie', label: 'Bardzo krótkie', desc: 'Maszynka, kilka mm' },
+      { value: 'krótkie',        label: 'Krótkie',        desc: '1–3 cm, widoczna tekstura' },
+      { value: 'średnie',        label: 'Średnie',        desc: 'Powyżej 3 cm, zakrywają uszy' },
+    ],
+  },
+  {
+    key: 'fringeLength',
+    title: 'Jak długie włosy chcesz mieć z przodu?',
+    options: [
+      { value: 'bardzo_krótkie', label: 'Bardzo krótkie', desc: 'Maszynka, ledwo widoczne' },
+      { value: 'krótkie',        label: 'Krótkie',        desc: 'Kilka cm, nie sięgają czoła' },
+      { value: 'średnie',        label: 'Średnie',        desc: 'Do brwi lub oczu' },
+      { value: 'długie',         label: 'Długie',          desc: 'Poniżej oczu' },
+    ],
+  },
+  {
+    key: 'backLength',
+    title: 'Jak długie włosy chcesz mieć z tyłu?',
+    options: [
+      { value: 'do_skóry',       label: 'Do skóry',       desc: 'Ogolone na zero' },
+      { value: 'bardzo_krótkie', label: 'Bardzo krótkie', desc: 'Maszynka, kilka mm' },
+      { value: 'krótkie',        label: 'Krótkie',        desc: '1–3 cm' },
+      { value: 'średnie',        label: 'Średnie',        desc: '3–6 cm' },
+      { value: 'długie',         label: 'Długie',          desc: 'Poniżej karku' },
+    ],
+  },
+  {
+    key: 'stylingTime',
+    title: 'Ile czasu rano poświęcasz na włosy?',
+    options: [
+      { value: 'none',          label: 'Nie chcę się stylizować', desc: 'Umyć i iść' },
+      { value: 'minimal',       label: '5 minut',                 desc: 'Szybka stylizacja, odrobina produktu' },
+      { value: 'likes_styling', label: 'Lubię się stylizować',    desc: 'Chętnie poświęcam czas na włosy' },
     ],
   },
 ]
 
-// Ranking: dłuższe = wyższy numer. Jeśli masz dłuższe niż minimum potrzebne → da się ściąć.
 const SIDE_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3 }
 const FRINGE_RANK = { bardzo_krótkie: 0, krótkie: 1, średnie: 2, długie: 3 }
 const BACK_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3, długie: 4 }
 
-function scoreLengthMatch(userValue, suitableValues, rankMap) {
-  const userRank = rankMap[userValue]
-  const minRequired = Math.min(...suitableValues.map(v => rankMap[v]))
-  // Exact match — user's current length is one of the suitable lengths
-  if (suitableValues.includes(userValue)) return 2
-  // User has more hair than needed — can be cut, but not ideal fit
-  if (userRank > Math.max(...suitableValues.map(v => rankMap[v]))) return 1
-  // User has enough to reach at least the minimum
-  if (userRank >= minRequired) return 1
-  // Too short — can't achieve this haircut
+// 1.0 = exact match, 0.5 = one step away, 0 = far off
+function scoreLengthPref(userPref, suitableValues, rankMap) {
+  if (suitableValues.includes(userPref)) return 1.0
+  const userRank = rankMap[userPref]
+  const closestDist = Math.min(...suitableValues.map(v => Math.abs(rankMap[v] - userRank)))
+  if (closestDist === 1) return 0.5
   return 0
 }
 
-const MAX_SCORE = 9 // 3 binary (face/type/thickness) + 3 length x2
-
 function scoreHaircut(haircut, formData) {
-  let s = 0
-  if (haircut.suitable_face_shapes.includes(formData.faceShape))          s++
-  if (haircut.suitable_hair_types.includes(formData.hairType))            s++
-  if (haircut.suitable_hair_thicknesses.includes(formData.hairThickness)) s++
-  s += scoreLengthMatch(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK)
-  s += scoreLengthMatch(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK)
-  s += scoreLengthMatch(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK)
-  return s
+  // Twarda eliminacja: typ włosów musi pasować
+  if (!haircut.suitable_hair_types.includes(formData.hairType)) return -1
+
+  let score = 0
+
+  // Kształt twarzy: 50 pkt (najważniejsze — fizjologia)
+  if (haircut.suitable_face_shapes.includes(formData.faceShape)) score += 50
+
+  // Preferencje długości: 30 pkt (10 za boki, 10 za przód, 10 za tył)
+  score += scoreLengthPref(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK)   * 10
+  score += scoreLengthPref(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK) * 10
+  score += scoreLengthPref(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK)   * 10
+
+  // Czas stylizacji: 20 pkt
+  if (haircut.styling_time.includes(formData.stylingTime)) score += 20
+
+  return score
 }
 
 export default function App() {
   const [screen, setScreen]           = useState('form')
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData]       = useState({
-    faceShape: null, hairType: null, hairThickness: null, sideLength: null, fringeLength: null, backLength: null,
+    faceShape: null, hairType: null, sideLength: null, fringeLength: null, backLength: null, stylingTime: null,
   })
   const [results, setResults]   = useState([])
   const [fading, setFading]     = useState(false)
@@ -118,9 +120,10 @@ export default function App() {
   const handleSubmit = useCallback(() => {
     const scored = haircuts
       .map(h => ({ ...h, score: scoreHaircut(h, formData) }))
+      .filter(h => h.score >= 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 3)
-      .map(h => ({ ...h, percentMatch: Math.round((h.score / MAX_SCORE) * 100) }))
+      .map(h => ({ ...h, percentMatch: h.score }))
     setResults(scored)
     setScreen('loading')
   }, [formData])
