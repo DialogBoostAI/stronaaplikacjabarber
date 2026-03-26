@@ -199,7 +199,7 @@
     "name": "Modern Mullet",
     "description": "Krótko z przodu i po bokach, dłużej z tyłu. Odświeżona wersja kultowej fryzury lat 80.",
     "suitable_face_shapes": ["owal", "diament", "prostokąt"],
-    "suitable_hair_types": ["proste", "falowane"],
+    "suitable_hair_types": ["proste", "falowane", "kręcone"],
     "suitable_hair_thicknesses": ["normalne", "grube"],
     "suitable_side_lengths": ["krótkie"],
     "suitable_fringe_lengths": ["krótkie", "średnie"],

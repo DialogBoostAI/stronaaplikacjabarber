@@ -13,10 +13,12 @@ const SIDE_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3
 const FRINGE_RANK = { bardzo_krótkie: 0, krótkie: 1, średnie: 2, długie: 3 }
 const BACK_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3, długie: 4 }
 
-function canAchieve(userValue, suitableValues, rankMap) {
+// 2 = exact match, 1 = can cut to fit, 0 = too short
+function lengthMatchLevel(userValue, suitableValues, rankMap) {
+  if (suitableValues.includes(userValue)) return 2
   const userRank = rankMap[userValue]
   const minRequired = Math.min(...suitableValues.map(v => rankMap[v]))
-  return userRank >= minRequired
+  return userRank >= minRequired ? 1 : 0
 }
 
 export default function HaircutCard({ haircut, index, formData, steps }) {
@@ -26,14 +28,14 @@ export default function HaircutCard({ haircut, index, formData, steps }) {
   const { name, description, percentMatch, score, image_path, tags } = haircut
   const isPartial = percentMatch < 75
 
-  // Check each criterion
+  // match: 2 = perfect, 1 = partial, 0 = no match
   const criteria = [
-    { key: 'faceShape',     match: haircut.suitable_face_shapes.includes(formData.faceShape) },
-    { key: 'hairType',      match: haircut.suitable_hair_types.includes(formData.hairType) },
-    { key: 'hairThickness', match: haircut.suitable_hair_thicknesses.includes(formData.hairThickness) },
-    { key: 'sideLength',    match: canAchieve(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK) },
-    { key: 'fringeLength',  match: canAchieve(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK) },
-    { key: 'backLength',    match: canAchieve(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK) },
+    { key: 'faceShape',     match: haircut.suitable_face_shapes.includes(formData.faceShape) ? 2 : 0 },
+    { key: 'hairType',      match: haircut.suitable_hair_types.includes(formData.hairType) ? 2 : 0 },
+    { key: 'hairThickness', match: haircut.suitable_hair_thicknesses.includes(formData.hairThickness) ? 2 : 0 },
+    { key: 'sideLength',    match: lengthMatchLevel(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK) },
+    { key: 'fringeLength',  match: lengthMatchLevel(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK) },
+    { key: 'backLength',    match: lengthMatchLevel(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK) },
   ]
 
   return (
@@ -110,26 +112,37 @@ export default function HaircutCard({ haircut, index, formData, steps }) {
 
         {/* Criteria checkmarks */}
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-800">
-          {criteria.map(({ key, match }) => (
-            <div key={key} className="flex items-center gap-2">
-              <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
-                match ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-800 text-gray-600'
-              }`}>
-                {match ? (
-                  <svg width="8" height="7" viewBox="0 0 8 7" fill="none">
-                    <path d="M1 3.5L3 5.5L7 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                ) : (
-                  <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                    <path d="M2 2L6 6M6 2L2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                )}
+          {criteria.map(({ key, match }) => {
+            const color = match === 2 ? 'bg-emerald-500/20 text-emerald-400'
+                        : match === 1 ? 'bg-amber-500/20 text-amber-400'
+                        : 'bg-gray-800 text-gray-600'
+            const textColor = match === 2 ? 'text-gray-300'
+                            : match === 1 ? 'text-gray-400'
+                            : 'text-gray-600'
+            return (
+              <div key={key} className="flex items-center gap-2">
+                <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${color}`}>
+                  {match === 2 ? (
+                    <svg width="8" height="7" viewBox="0 0 8 7" fill="none">
+                      <path d="M1 3.5L3 5.5L7 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : match === 1 ? (
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                      <path d="M4 1.5V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <circle cx="4" cy="6.5" r="0.5" fill="currentColor"/>
+                    </svg>
+                  ) : (
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                      <path d="M2 2L6 6M6 2L2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  )}
+                </div>
+                <span className={`text-xs ${textColor}`}>
+                  {CRITERIA_LABELS[key]}
+                </span>
               </div>
-              <span className={`text-xs ${match ? 'text-gray-300' : 'text-gray-600'}`}>
-                {CRITERIA_LABELS[key]}
-              </span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

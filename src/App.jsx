@@ -73,21 +73,29 @@ const SIDE_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3
 const FRINGE_RANK = { bardzo_krótkie: 0, krótkie: 1, średnie: 2, długie: 3 }
 const BACK_RANK   = { do_skóry: 0, bardzo_krótkie: 1, krótkie: 2, średnie: 3, długie: 4 }
 
-function canAchieveLength(userValue, suitableValues, rankMap) {
+function scoreLengthMatch(userValue, suitableValues, rankMap) {
   const userRank = rankMap[userValue]
-  // User needs enough hair: their rank >= minimum required rank
   const minRequired = Math.min(...suitableValues.map(v => rankMap[v]))
-  return userRank >= minRequired
+  // Exact match — user's current length is one of the suitable lengths
+  if (suitableValues.includes(userValue)) return 2
+  // User has more hair than needed — can be cut, but not ideal fit
+  if (userRank > Math.max(...suitableValues.map(v => rankMap[v]))) return 1
+  // User has enough to reach at least the minimum
+  if (userRank >= minRequired) return 1
+  // Too short — can't achieve this haircut
+  return 0
 }
+
+const MAX_SCORE = 9 // 3 binary (face/type/thickness) + 3 length x2
 
 function scoreHaircut(haircut, formData) {
   let s = 0
   if (haircut.suitable_face_shapes.includes(formData.faceShape))          s++
   if (haircut.suitable_hair_types.includes(formData.hairType))            s++
   if (haircut.suitable_hair_thicknesses.includes(formData.hairThickness)) s++
-  if (canAchieveLength(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK))   s++
-  if (canAchieveLength(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK)) s++
-  if (canAchieveLength(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK))   s++
+  s += scoreLengthMatch(formData.sideLength,   haircut.suitable_side_lengths,   SIDE_RANK)
+  s += scoreLengthMatch(formData.fringeLength,  haircut.suitable_fringe_lengths, FRINGE_RANK)
+  s += scoreLengthMatch(formData.backLength,    haircut.suitable_back_lengths,   BACK_RANK)
   return s
 }
 
@@ -112,7 +120,7 @@ export default function App() {
       .map(h => ({ ...h, score: scoreHaircut(h, formData) }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 3)
-      .map(h => ({ ...h, percentMatch: Math.round((h.score / 6) * 100) }))
+      .map(h => ({ ...h, percentMatch: Math.round((h.score / MAX_SCORE) * 100) }))
     setResults(scored)
     setScreen('loading')
   }, [formData])
