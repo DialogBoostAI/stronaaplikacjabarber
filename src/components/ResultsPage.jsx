@@ -84,7 +84,7 @@ export default function ResultsPage({ results, formData, steps, onReset }) {
           ↺ Zacznij od nowa
         </button>
         <a
-          href="https://jokerbarber.vercel.app"
+          href="https://ostryjakbrzytwa.vercel.app/"
           className="px-8 py-4 rounded-xl border-2 border-gray-600 text-gray-400 font-semibold text-base text-center hover:border-gray-400 hover:text-white transition-all duration-300 active:scale-95"
         >
           ← Wróć na stronę
